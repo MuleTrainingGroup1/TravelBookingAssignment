@@ -1,0 +1,39 @@
+#%RAML 1.0 DataType
+description: URI and output parms 
+
+type: object
+#uri param as string
+
+properties:
+  transportType:
+    type: string
+    required: true
+    description: The mode of transportation land or sea
+    enum: [land ,sea]
+     
+  transportCompany:
+    type: string
+    required: true
+    description: The provider of transport TransNational or FirstCoach 
+    enum: [transNational ,firstCoach]
+
+  #responses as array 
+   
+  originLocation.locationCode:
+    type: string
+    required: true
+    description: The departure location code
+   
+  destinationLocation.locationCode:
+    type: string
+    required: true
+    description: The arrival location code
+    
+
+
+  
+
+    
+
+
+

@@ -1,0 +1,36 @@
+#%RAML 1.0
+title: Retrieve FirstCoach Routes
+mediaType: 
+- application/json
+version: v1
+description: To retrieve route list from FirstCoach. Routes list are usually static and are only updated once a month.
+protocols:
+  - HTTPS
+baseUri: https://getfirst_couchroute.com
+
+types:
+  routeDT: !include  dataType.raml
+
+securitySchemes:
+  basic:
+    description: This API supports Basic Authentication.
+    type:  Basic Authentication
+       
+traits:
+  errorTrait: !include error_trait.raml 
+
+securedBy: basic
+
+# nested Nested resources    
+/{transportType}/{transportCompany}/routes:
+  
+  get:
+    is: [errorTrait]
+    description: To reterive the available routes for the transport type 
+    displayName: GET FIRSTCOUCH ROUTES
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            example : !include route_example.raml
