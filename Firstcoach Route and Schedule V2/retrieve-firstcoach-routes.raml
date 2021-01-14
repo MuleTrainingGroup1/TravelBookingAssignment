@@ -1,0 +1,55 @@
+#%RAML 1.0
+title: Retrieve FirstCoach Routes and Schedules
+mediaType: 
+- application/json
+version: v1
+description: To retrieve route list and Schedules  from FirstCoach. 
+protocols:
+  - HTTPS
+ 
+baseUri: https://getFirstCoach.com
+
+types:
+  getRoutes: !include  datatypes/routeData.raml
+  scheduleDate: !include datatypes/scheduleData.raml
+
+securitySchemes:
+  basic:
+    description: This API supports Basic Authentication.
+    type:  Basic Authentication
+       
+traits:
+  errorTrait: !include traits/errorRes.raml
+  queryParams: !include traits/queryParams.raml 
+ 
+ # nested Nested resources    
+/{transportType}:
+  /{transportCompany}:
+
+   /routes:
+    securedBy: basic
+    get:
+      is: [errorTrait]
+      displayName: GET FIRSTCOUCH ROUTES.
+      description: To reterive the available routes for the transport type.
+      responses:
+        200:
+          body:
+            application/json:
+              example: !include examples/routeExample.raml
+
+    /schedules:
+      get:
+        is: [queryParams, errorTrait]
+        displayName: Get schedules.
+        description: This is to reterive schedules information. 
+        responses:
+          200:
+            body:
+              application/json:
+                example: !include examples/schedulesExample.raml 
+
+
+     
+
+

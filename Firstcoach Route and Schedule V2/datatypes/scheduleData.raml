@@ -1,0 +1,30 @@
+#%RAML 1.0 DataType
+displayName: Get schedules.
+description: This data type is used to reterive schedules.
+type: object
+properties:
+  departureSchedules:
+    type: array
+    items:
+      properties:
+        "availableSeats":
+          type: integer
+          required: true
+        "departureDateTime": 
+          type: datetime
+          required: true
+        "travelRoute":
+          type: object
+          properties:
+            "destinationLocation":
+              type: object
+              properties:
+                "locationCode":
+                  type: string
+                  required: true
+            "originLocation": 
+              type: object
+              properties:
+                "locationCode": 
+                  type: string
+                  required: true
