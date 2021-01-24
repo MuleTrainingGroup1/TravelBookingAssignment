@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="endSystemOutput" format="xml">
+      <types:example format="xml" element="ROUTELIST" location="examples/TransNationalResponseCDATA.xml"/>
+    </types:type>
+    <types:type name="getRoutesSystemAPIOutput" format="json">
+      <types:shape format="weave" example="examples/routes.raml"><![CDATA[%dw 2.0
+
+type getRoutesSystemAPIOutput = Array<{|  originLocation: {| locationCode: String |},   destinationLocation: {| locationCode: String |}|}> {"example": "[{\\\"originLocation\\\":{\\\"locationCode\\\":\\\"BEN-SG\\\"},\\\"destinationLocation\\\":{\\\"locationCode\\\":\\\"KLG-MY\\\"}}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0dee59aa-23cb-4033-a09d-41532ad50bf0">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="endSystemOutput"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#5fc9cbca-bda2-47ac-bd82-cc68d6e6885f">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="getRoutesSystemAPIOutput"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

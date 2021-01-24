@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="4244f47f-28fb-4cd7-97d7-7f6389c25af1" >
+		<wsc:connection wsdlLocation="transnational.wsdl" address="${webService.address}" service="Bookings" port="BookingsSOAP">
+			<wsc:web-service-security actor="http://schemas.xmlsoap.org/soap/actor/next" />
+		</wsc:connection>
+	</wsc:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="3c56c76a-136c-43ef-ac36-8bd911e3dc77" file="${env}.yaml" />
+	<flow name="TransNational-getRoutesFlow" doc:id="40f55cee-48c1-4240-a2a9-cb2fece3d70a" >
+		<logger level="INFO" doc:name="Logger" doc:id="e7a51097-9642-4ad0-9853-a8459e540922" message="Entered into TransNational-getRoutesFlow"/>
+		<wsc:consume doc:name="Consume" doc:id="13e764ba-b84a-4976-b335-f4fb84a8dbde" config-ref="Web_Service_Consumer_Config" operation="getRoutes">
+			<wsc:message >
+				<wsc:body ><![CDATA[#[output application/xml
+ns ns0 http://www.example.org/Bookings/
+---
+{
+	ns0#getRoutes: {
+		in: (attributes.uriParams.transportTypedefault "")
+	}
+}]]]></wsc:body>
+			</wsc:message>
+		</wsc:consume>
+		<logger level="INFO" doc:name="Logger" doc:id="624b1138-b2c8-4e9e-885d-49e4782e3f7e" message="Received output from TransNational Web Service."/>
+		<ee:transform doc:name="Transform CDATA to XML" doc:id="0dee59aa-23cb-4033-a09d-41532ad50bf0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.example.org/Bookings/
+---
+read(trim(payload.body.ns0#getRoutesResponse.out as String) ,"application/xml")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="1d655777-60c6-4850-8245-2cd41b84010a" message='Converted CDATA to XML.'/>
+		<ee:transform doc:name="Transform XML to JSON" doc:id="5fc9cbca-bda2-47ac-bd82-cc68d6e6885f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload.ROUTELIST.*ROUTEINFO map ( rOUTEINFO , indexOfROUTEINFO ) -> {
+	originLocation: {
+		locationCode: rOUTEINFO.ORIGIN default ""
+	},
+	destinationLocation: {
+		locationCode: rOUTEINFO.DESTINATION default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bfd4c420-6090-491d-8741-533fe75dcde0" message='Converted XML to JSON.'/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="82425c56-4b82-4892-98d1-a9bfd125372c" type="WSC:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="974de4ff-7fdf-476e-9dca-bb9d72ca8819" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Some of the input data is missing.",
+	"error description": error.detailedDescription
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ad0233af-10ea-4cba-ae08-e3e6203ce8aa" type="WSC:BAD_RESPONSE, WSC:CANNOT_DISPATCH, WSC:CONNECTIVITY, WSC:ENCODING, WSC:INVALID_WSDL, WSC:RETRY_EXHAUSTED, WSC:SOAP_FAULT, WSC:TIMEOUT, STREAM_MAXIMUM_SIZE_EXCEEDED">
+				<ee:transform doc:name="Transform Message" doc:id="ba9356e4-96c4-403a-9b00-ebd6314060be" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "System is experiencing some issue.Please try after some time.",
+	"error description": error.detailedDescription
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="46bc20d6-db9e-4a83-9c07-3227edbf459f" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="77ef750a-660d-4091-b56b-5b80588a7d63" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Some technical issue has been occured.Please contact to support team ",
+	"error description": error.detailedDescription
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
