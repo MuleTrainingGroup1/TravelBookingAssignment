@@ -53,19 +53,6 @@ payload.ROUTELIST.*ROUTEINFO map ( rOUTEINFO , indexOfROUTEINFO ) -> {
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="bfd4c420-6090-491d-8741-533fe75dcde0" message='Converted XML to JSON.'/>
 		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="82425c56-4b82-4892-98d1-a9bfd125372c" type="WSC:BAD_REQUEST">
-				<ee:transform doc:name="Transform Message" doc:id="974de4ff-7fdf-476e-9dca-bb9d72ca8819" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message": "Some of the input data is missing.",
-	"error description": error.detailedDescription
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</on-error-propagate>
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="ad0233af-10ea-4cba-ae08-e3e6203ce8aa" type="WSC:BAD_RESPONSE, WSC:CANNOT_DISPATCH, WSC:CONNECTIVITY, WSC:ENCODING, WSC:INVALID_WSDL, WSC:RETRY_EXHAUSTED, WSC:SOAP_FAULT, WSC:TIMEOUT, STREAM_MAXIMUM_SIZE_EXCEEDED">
 				<ee:transform doc:name="Transform Message" doc:id="ba9356e4-96c4-403a-9b00-ebd6314060be" >
 					<ee:message >
@@ -73,7 +60,7 @@ output application/json
 output application/json
 ---
 {
-	"message": "System is experiencing some issue.Please try after some time.",
+	"message": "System is experiencing some issue. Please try after some time.",
 	"error description": error.detailedDescription
 }]]></ee:set-payload>
 					</ee:message>
@@ -86,7 +73,20 @@ output application/json
 output application/json
 ---
 {
-	"message": "Some technical issue has been occured.Please contact to support team ",
+	"message": "Some technical issue has been occured. Please contact to support team ",
+	"error description": error.detailedDescription
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="82425c56-4b82-4892-98d1-a9bfd125372c" type="WSC:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message" doc:id="974de4ff-7fdf-476e-9dca-bb9d72ca8819">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Some of the input data is missing.",
 	"error description": error.detailedDescription
 }]]></ee:set-payload>
 					</ee:message>
