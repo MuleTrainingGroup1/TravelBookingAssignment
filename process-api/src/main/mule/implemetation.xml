@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implemetationFlow_GetRoutes" doc:id="15ee5a37-8065-455c-b5d0-dcc121ccfebb" >
+		<logger level="INFO" doc:name="Logger" doc:id="f15ba92e-9523-4760-be69-771f81e32f10" message="Entering implemetationFlow_GetRoutes in process API."/>
+	</flow>
+	<flow name="implemetationFlow_GetSchedules" doc:id="2a5a87a7-8c28-408b-b8bb-03601d54d2ae" >
+		<logger level="INFO" doc:name="Logger" doc:id="8ac1d6cb-3de2-4a8e-a1de-33ecc61ca9ca" message="Entering implemetationFlow_GetSchedules in process API."/>
+	</flow>
+</mule>
